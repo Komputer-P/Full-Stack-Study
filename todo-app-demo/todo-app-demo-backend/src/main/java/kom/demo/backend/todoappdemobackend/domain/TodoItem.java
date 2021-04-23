@@ -1,33 +1,34 @@
 package kom.demo.backend.todoappdemobackend.domain;
 
-//Lombok after
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+
+@Getter
+@NoArgsConstructor
+@Entity
 public class TodoItem {
 
-    private Integer id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column
     private String task;
+
+    @Column
     private Boolean isDone;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getTask() {
-        return task;
-    }
-
-    public void setTask(String task) {
+    @Builder
+    public TodoItem(String task, Boolean isDone) {
         this.task = task;
+        this.isDone = isDone;
     }
 
-    public Boolean getIsDone() {
-        return isDone;
-    }
-
-    public void setIsDone(Boolean done) {
-        isDone = done;
+    public void update(String task, Boolean isDone) {
+        this.task = task;
+        this.isDone = isDone;
     }
 }

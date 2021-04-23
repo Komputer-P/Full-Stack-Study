@@ -2,50 +2,43 @@ package kom.demo.backend.todoappdemobackend.service;
 
 import kom.demo.backend.todoappdemobackend.domain.TodoItem;
 import kom.demo.backend.todoappdemobackend.repository.TodoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
+@RequiredArgsConstructor
 @Service
 public class TodoService {
+    private final TodoRepository todoRepository;
 
-    @Autowired
-    private TodoRepository todoRepo;
-
+    @Transactional
     public List<TodoItem> fetchAllTodoItems() {
-        return todoRepo.fetchAllTodoItems();
+        return todoRepository.findAll();
     }
 
-    public TodoItem updateTodoItem(Integer id, TodoItem todoItem) {
-        Optional<TodoItem> todoOpt = todoRepo.fetchAllTodoItems()
-                .stream()
-                .filter(item -> item.getId().equals(id))
-                .findAny();
+    @Transactional
+    public TodoItem updateTodoItem(Long id, TodoItem todoItem) {
+        TodoItem updatedTodoItem = findById(id);
+        updatedTodoItem.update(todoItem.getTask(),todoItem.getIsDone());
 
-        if(todoOpt.isPresent()) {
-            TodoItem item = todoOpt.get();
-            item.setIsDone(todoItem.getIsDone());
-            item.setTask(todoItem.getTask());
-
-            return item;
-        }
-
-        return null;
+        return updatedTodoItem;
     }
 
+    @Transactional
     public TodoItem createTodoItem() {
-        TodoItem todoItem = new TodoItem();
-
-        todoItem.setIsDone(false);
-        todoItem = todoRepo.save(todoItem);
-        todoItem.setTask("Task #" + todoItem.getId());
-
-        return todoItem;
+        return todoRepository.save(new TodoItem("Task",false));
     }
 
-    public void deleteTodoItem(Integer id) {
-        todoRepo.delete(id);
+    @Transactional
+    public void deleteTodoItem(Long id) {
+        TodoItem deleteTodoItem = findById(id);
+
+        todoRepository.delete(deleteTodoItem);
+    }
+
+    public TodoItem findById(Long id) {
+        return todoRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 Id를 가진 데이터가 없습니다!"));
     }
 }

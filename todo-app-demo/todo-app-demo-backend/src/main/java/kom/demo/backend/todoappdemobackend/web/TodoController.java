@@ -2,7 +2,7 @@ package kom.demo.backend.todoappdemobackend.web;
 
 import kom.demo.backend.todoappdemobackend.domain.TodoItem;
 import kom.demo.backend.todoappdemobackend.service.TodoService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 // http://localhost:8080
+@RequiredArgsConstructor
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
 public class TodoController {
@@ -26,8 +27,7 @@ public class TodoController {
     // Update   = PUT       = 'http://localhost:8080/api/domainObjectName/{id}'
     // Delete   = DELETE    = 'http://localhost:8080/api/domainObjectName/{id}'
 
-    @Autowired
-    private TodoService todoService;
+    private final TodoService todoService;
 
     @GetMapping("/api/todoItems")
     public ResponseEntity<?> fetchAllTodoItems() {
@@ -44,7 +44,7 @@ public class TodoController {
     }
 
     @PutMapping("/api/todoItems/{id}")
-    public ResponseEntity<?> updateTodoItem(@PathVariable Integer id, @RequestBody TodoItem todoItem) {
+    public ResponseEntity<?> updateTodoItem(@PathVariable Long id, @RequestBody TodoItem todoItem) {
         // call the service
         // get the data back from server
         TodoItem updatedTodoItem = todoService.updateTodoItem(id, todoItem);
@@ -54,7 +54,7 @@ public class TodoController {
     }
 
     @DeleteMapping("/api/todoItems/{id}")
-    public ResponseEntity<?> deleteTodoItem(@PathVariable Integer id) {
+    public ResponseEntity<?> deleteTodoItem(@PathVariable Long id) {
 
         todoService.deleteTodoItem(id);
 
